@@ -46,28 +46,32 @@ while True :
 	user_input = raw_input('tyftp>').strip()
 	if len(user_input) == 0 :
 		continue
-	if user_input == 'exit' : 
+	elif user_input == 'exit' : 
 		TYsock.close()
 		break
-	if user_input == 'quit' : 
+	elif user_input == 'quit' : 
 		TYsock.close()
 		break
-	if user_input == 'get' or user_input == 'send' :
+	elif user_input == 'get' or user_input == 'send' :
 		print "No file specified,use %s file_name" % user_input
 		continue
+	else :
+		try :
+			file_name = user_input.split()[1]
+		except IndexError :
+			print "Invalid command"
+			continue
 	try :
 		TYsock.send(user_input)
 		file_status = TYsock.recv(BUFFSIZE)
 		if file_status == 'server_send' :
-			file_name = user_input.split()[1]
 			GetFromServer(file_name)
 			print "file %s get done" % file_name
 		elif file_status == 'server_get' :
-			file_name = user_input.split()[1]
 			SendToServer(file_name)
 			print "file %s send done" % file_name
 		else :
 			print file_status
-	except OSError :
-		print "error"
+	except IOError :
+		print "No such file or directory"
 TYsock.close()
